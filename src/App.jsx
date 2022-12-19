@@ -1,64 +1,45 @@
 import React, { useState } from "react";
-import logo from "./logo.svg";
-import poweredBy from "./powered-by-vitawind-dark.png";
+import PlayerCard from "./PlayerCard";
 
 function App() {
-  const [count, setCount] = useState(0);
-
+  const [grid, setGrid] = useState([
+    [null, null, null],
+    [null, null, null],
+    [null, null, null],
+  ]);
+  const [playerSwitch, setplayerSwitch] = useState(false);
+  const updateState = (row, col) => {
+    let copy = [...grid];
+    if (!copy[row][col]) {
+      copy[row][col] = playerSwitch && copy[row][col] === null ? "X" : "0";
+      setplayerSwitch(!playerSwitch);
+      setGrid(copy);
+    }
+  };
   return (
-    <div className="text-center selection:bg-green-900">
-      <header className="flex min-h-screen flex-col items-center justify-center bg-[#282c34] text-white">
-        <img
-          src={logo}
-          className="animate-speed h-60 motion-safe:animate-spin"
-          alt="logo"
-        />
-        <style>
-          {
-            "\
-            .animate-speed{\
-              animation-duration:20s;\
-            }\
-          "
-          }
-        </style>
-        <p className="bg-gradient-to-r from-emerald-300 to-sky-300 bg-clip-text text-5xl font-black text-transparent selection:bg-transparent">
-          Vite + React + Tailwindcss v3
-        </p>
-        <p className="mt-3">
-          <button
-            type="button"
-            className="my-6 rounded bg-gray-300 px-2 py-2 text-[#282C34] transition-all hover:bg-gray-200"
-            onClick={() => setCount((count) => count + 1)}
-          >
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code className="text-[#8d96a7]">App.jsx</code> and save to test
-          HMR updates.
-        </p>
-        <p className="mt-3 flex gap-3 text-center text-[#8d96a7]">
-          <a
-            className="text-[#61dafb] transition-all hover:text-blue-400"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {" | "}
-          <a
-            className="text-[#61dafb] transition-all hover:text-blue-400"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-        <img src={poweredBy} className="mx-auto my-8" alt="powered-by" />
-      </header>
+    <div className="grid h-screen place-items-center bg-black">
+      <div className="grid grid-cols-3 ">
+        <div className="col-span-3 flex justify-between pb-[60px]">
+          <PlayerCard playerName={"Player 1"} turn={!playerSwitch} />
+          <PlayerCard playerName={"Player 2"} turn={playerSwitch} />
+        </div>
+        {grid.map((row, i) => {
+          return row.map((cell, j) => {
+            return (
+              <div
+                onClick={() => updateState(i, j)}
+                className={`flex h-[120px] w-[120px] cursor-pointer items-center justify-center border-white text-white
+                ${j === 0 ? "border-r-4 " : ""}
+                ${j === 2 ? "border-l-4" : ""}
+                ${i === 1 ? "border-y-4" : ""}
+                `}
+              >
+                {cell}
+              </div>
+            );
+          });
+        })}
+      </div>
     </div>
   );
 }
